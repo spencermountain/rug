@@ -24,6 +24,8 @@ export class RugParser {
           this.processParagraphs(buffer);
           buffer = [];
         }
+        // Add empty line to maintain spacing
+        this.result.push('');
         continue;
       }
 
@@ -143,30 +145,9 @@ export class RugParser {
   }
 
   processParagraphs(lines) {
-    // Split text into paragraphs based on empty lines
-    const paragraphs = [];
-    let currentParagraph = [];
-
-    for (const line of lines) {
-      if (line.trim() === '') {
-        if (currentParagraph.length) {
-          paragraphs.push(currentParagraph.join('\n'));
-          currentParagraph = [];
-        }
-      } else {
-        currentParagraph.push(line);
-      }
-    }
-
-    if (currentParagraph.length) {
-      paragraphs.push(currentParagraph.join('\n'));
-    }
-
-    // Convert paragraphs to HTML (no need for style attribute now)
-    for (const paragraph of paragraphs) {
-      if (paragraph.trim()) {
-        this.result.push(`<p>${paragraph}</p>`);
-      }
+    // Simply join the lines with newlines, no <p> tags needed
+    if (lines.length) {
+      this.result.push(lines.join('\n'));
     }
   }
 } 
