@@ -1,0 +1,48 @@
+{
+  "name": "rug-lang",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./nuxt": "./nuxt/module.js"
+  },
+  "files": [
+    "src",
+    "nuxt",
+    "syntaxes",
+    "language-configuration.json"
+  ],
+  "scripts": {
+    "test": "node --test tests/parser.test.js",
+    "demo": "npx live-server --open=demo/index.html",
+    "build": "node scripts/build.js"
+  },
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "live-server": "^1.2.2",
+    "rollup": "^4.12.0"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "rug",
+        "aliases": [
+          "Rug",
+          "rug"
+        ],
+        "extensions": [
+          ".rug"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "rug",
+        "scopeName": "source.rug",
+        "path": "./syntaxes/rug.tmLanguage.json"
+      }
+    ]
+  }
+}
