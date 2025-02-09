@@ -22,10 +22,9 @@ and so is this.
 
 fancy html with attributes
 ```
-.label:for="email" Email:
-.input#email:type="email":required
+.input#email:type="email"
 .button.primary:type=submit
-   Submit Form
+   Submit
 ```
 
 inline html is also cool

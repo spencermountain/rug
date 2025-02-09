@@ -2,13 +2,17 @@
   "name": "rug-lang",
   "version": "0.1.0",
   "type": "module",
+  "description": "A minimal templating language with clean indentation-based syntax",
   "main": "src/index.js",
+  "types": "src/index.d.ts",
   "exports": {
     ".": "./src/index.js",
     "./nuxt": "./nuxt/module.js"
   },
   "files": [
     "src",
+    "builds",
+    "README.md",
     "nuxt",
     "syntaxes",
     "language-configuration.json"
@@ -16,7 +20,17 @@
   "scripts": {
     "test": "node --test tests/parser.test.js",
     "demo": "npx live-server --open=demo/index.html",
-    "build": "node scripts/build.js"
+    "build": "node scripts/build.js",
+    "prepublishOnly": "npm run test && npm run build"
+  },
+  "keywords": [
+    "markup"
+  ],
+  "author": "Spencer Kelly",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spencermountain/rug-lang.git"
   },
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.4",
