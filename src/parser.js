@@ -29,8 +29,8 @@ export class RugParser {
         continue;
       }
 
-      // Handle class-based div syntax
-      if (trimmedLine.startsWith('.') || trimmedLine.startsWith('#')) {
+      // Updated condition to include lines starting with :
+      if (trimmedLine.startsWith('.') || trimmedLine.startsWith('#') || trimmedLine.startsWith(':')) {
         if (buffer.length) {
           this.processParagraphs(buffer);
           buffer = [];
@@ -96,7 +96,6 @@ export class RugParser {
     const firstPart = parts[0];
     const content = parts.slice(1).join(' ');
 
-    // Parse the element definition (first part)
     const attrs = {
       tag: 'span',
       classes: [],
@@ -104,23 +103,50 @@ export class RugParser {
       attributes: {}
     };
 
-    // Match different parts of the element definition
-    const elementParts = firstPart.match(/([.#][^.#\[]+|\[[^\]]+\])/g) || [];
-
-    for (const part of elementParts) {
-      if (part.startsWith('.')) {
-        attrs.classes.push(part.slice(1));
-      } else if (part.startsWith('#')) {
-        attrs.id = part.slice(1);
-      } else if (part.startsWith('[') && part.endsWith(']')) {
-        const attrContent = part.slice(1, -1);
-        const [name, ...valueParts] = attrContent.split('=');
-        const value = valueParts.join('=');
-        attrs.attributes[name] = value.replace(/^["']|["']$/g, '');
+    // Check if line starts with a tag name
+    if (/^[a-zA-Z][a-zA-Z0-9]*(?:[.#:]|$)/.test(firstPart)) {
+      const tagMatch = firstPart.match(/^[a-zA-Z][a-zA-Z0-9]*/);
+      if (tagMatch) {
+        attrs.tag = tagMatch[0];
+        firstPart = firstPart.slice(tagMatch[0].length);
       }
     }
 
-    // Build the opening tag
+    // If remaining firstPart starts with :, treat it as an attribute-only element
+    if (firstPart.startsWith(':')) {
+      const elementParts = firstPart.match(/:[^=\s]+(?:=(?:[^"'\s]+|["'][^"']*["']))?/g) || [];
+      for (const part of elementParts) {
+        const hasEquals = part.includes('=');
+        if (hasEquals) {
+          const [name, ...valueParts] = part.slice(1).split('=');
+          const value = valueParts.join('=').replace(/^["']|["']$/g, '');
+          attrs.attributes[name] = value;
+        } else {
+          const name = part.slice(1);
+          attrs.attributes[name] = '';
+        }
+      }
+    } else {
+      const elementParts = firstPart.match(/([.#][^.#:]+|:[^=\s]+(?:=(?:[^"'\s]+|["'][^"']*["']))?)/g) || [];
+      for (const part of elementParts) {
+        if (part.startsWith('.')) {
+          attrs.classes.push(part.slice(1));
+        } else if (part.startsWith('#')) {
+          attrs.id = part.slice(1);
+        } else if (part.startsWith(':')) {
+          const hasEquals = part.includes('=');
+          if (hasEquals) {
+            const [name, ...valueParts] = part.slice(1).split('=');
+            const value = valueParts.join('=').replace(/^["']|["']$/g, '');
+            attrs.attributes[name] = value;
+          } else {
+            const name = part.slice(1);
+            attrs.attributes[name] = '';
+          }
+        }
+      }
+    }
+
     let tag = `<${attrs.tag}`;
 
     if (attrs.classes.length > 0) {
@@ -132,7 +158,7 @@ export class RugParser {
     }
 
     for (const [name, value] of Object.entries(attrs.attributes)) {
-      tag += ` ${name}="${value}"`;
+      tag += value === '' ? ` ${name}` : ` ${name}="${value}"`;
     }
 
     tag += '>';

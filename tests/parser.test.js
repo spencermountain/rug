@@ -278,4 +278,186 @@ test('handles complex nested spans', async (t) => {
     '</div>';
 
   assert.equal(parseRug(input), expected);
+});
+
+test('parses attributes with new syntax', async (t) => {
+  const input = `.button.primary:type="submit":disabled="true" Submit
+.input:required="true":type="email" 
+.label:for="email" Email Address`;
+
+  const expected =
+    '<div style="white-space: pre-wrap">\n' +
+    '<span class="button primary" type="submit" disabled="true">Submit</span>\n' +
+    '<span class="input" required="true" type="email"></span>\n' +
+    '<span class="label" for="email">Email Address</span>\n' +
+    '</div>';
+
+  assert.equal(parseRug(input), expected);
+});
+
+test('handles quoted values in attributes', async (t) => {
+  const input = `.card:data-title="Hello World":aria-label="Card component"
+  Content here`;
+
+  const expected =
+    '<div style="white-space: pre-wrap">\n' +
+    '<span class="card" data-title="Hello World" aria-label="Card component">\n' +
+    'Content here\n' +
+    '</span>\n' +
+    '</div>';
+
+  assert.equal(parseRug(input), expected);
+});
+
+test('supports shorthand boolean attributes', async (t) => {
+  const input = `.input:required:readonly:disabled
+.checkbox:checked Name
+.button:disabled:aria-hidden="true" Submit`;
+
+  const expected =
+    '<div style="white-space: pre-wrap">\n' +
+    '<span class="input" required readonly disabled></span>\n' +
+    '<span class="checkbox" checked>Name</span>\n' +
+    '<span class="button" disabled aria-hidden="true">Submit</span>\n' +
+    '</div>';
+
+  assert.equal(parseRug(input), expected);
+});
+
+test('mixes shorthand and valued attributes', async (t) => {
+  const input = `.form-group
+  .input:type="email":required:placeholder="Enter email":readonly
+  .button:type="submit":disabled Submit`;
+
+  const expected =
+    '<div style="white-space: pre-wrap">\n' +
+    '<span class="form-group">\n' +
+    '<span class="input" type="email" required placeholder="Enter email" readonly></span>\n' +
+    '<span class="button" type="submit" disabled>Submit</span>\n' +
+    '</span>\n' +
+    '</div>';
+
+  assert.equal(parseRug(input), expected);
+});
+
+test('supports attribute-only elements', async (t) => {
+  const input = `:type="text":required Input here
+:role="button":aria-label="Click me" Click
+:disabled Just disabled`;
+
+  const expected =
+    '<div style="white-space: pre-wrap">\n' +
+    '<span type="text" required>Input here</span>\n' +
+    '<span role="button" aria-label="Click me">Click</span>\n' +
+    '<span disabled>Just disabled</span>\n' +
+    '</div>';
+
+  assert.equal(parseRug(input), expected);
+});
+
+test('mixes class-based and attribute-only elements', async (t) => {
+  const input = `.container
+  :type="text":required Input field
+  .button:disabled Button
+  :aria-label="End" The end`;
+
+  const expected =
+    '<div style="white-space: pre-wrap">\n' +
+    '<span class="container">\n' +
+    '<span type="text" required>Input field</span>\n' +
+    '<span class="button" disabled>Button</span>\n' +
+    '<span aria-label="End">The end</span>\n' +
+    '</span>\n' +
+    '</div>';
+
+  assert.equal(parseRug(input), expected);
+});
+
+test('supports simple attribute-only syntax', async (t) => {
+  const input = ':prop="val" foo';
+
+  const expected =
+    '<div style="white-space: pre-wrap">\n' +
+    '<span prop="val">foo</span>\n' +
+    '</div>';
+
+  assert.equal(parseRug(input), expected);
+});
+
+test('supports explicit tag types', async (t) => {
+  const input = `div.container
+  h1.title Main Title
+  p.text Some text here
+  input:type="text":required
+  button.primary:disabled Click me`;
+
+  const expected =
+    '<div style="white-space: pre-wrap">\n' +
+    '<div class="container">\n' +
+    '<h1 class="title">Main Title</h1>\n' +
+    '<p class="text">Some text here</p>\n' +
+    '<input class="primary" type="text" required></input>\n' +
+    '<button class="primary" disabled>Click me</button>\n' +
+    '</div>\n' +
+    '</div>';
+
+  assert.equal(parseRug(input), expected);
+});
+
+test('mixes tag types with attribute-only syntax', async (t) => {
+  const input = `form:method="post"
+  input:type="email":required
+  button:type="submit" Submit`;
+
+  const expected =
+    '<div style="white-space: pre-wrap">\n' +
+    '<form method="post">\n' +
+    '<input type="email" required></input>\n' +
+    '<button type="submit">Submit</button>\n' +
+    '</div>';
+
+  assert.equal(parseRug(input), expected);
+});
+
+test('supports tag types with ids', async (t) => {
+  const input = `div#main.container
+  h2#title.text-xl Welcome
+  input#email:type="email"`;
+
+  const expected =
+    '<div style="white-space: pre-wrap">\n' +
+    '<div id="main" class="container">\n' +
+    '<h2 id="title" class="text-xl">Welcome</h2>\n' +
+    '<input id="email" type="email"></input>\n' +
+    '</div>';
+
+  assert.equal(parseRug(input), expected);
+});
+
+test('supports both quote styles in attributes', async (t) => {
+  const input = `.card:style="color: red":data-label='Hello world'
+  .button:type="submit":aria-label='Click me' Submit
+  :style='display: block':title="Tooltip" Content`;
+
+  const expected =
+    '<div style="white-space: pre-wrap">\n' +
+    '<span class="card" style="color: red" data-label="Hello world"></span>\n' +
+    '<span class="button" type="submit" aria-label="Click me">Submit</span>\n' +
+    '<span style="display: block" title="Tooltip">Content</span>\n' +
+    '</div>';
+
+  assert.equal(parseRug(input), expected);
+});
+
+test('handles quotes within quoted values', async (t) => {
+  const input = `.card:data-content="It's a 'quoted' string":title='Say "hello"'
+  .alert:aria-label='Don"t forget':data-msg="Don't forget" Alert`;
+
+  const expected =
+    '<div style="white-space: pre-wrap">\n' +
+    '<span class="card" data-content="It\'s a \'quoted\' string" title="Say &quot;hello&quot;"></span>\n' +
+    '<span class="alert" aria-label="Don&quot;t forget" data-msg="Don\'t forget">Alert</span>\n' +
+    '</div>';
+
+  assert.equal(parseRug(input), expected);
 }); 

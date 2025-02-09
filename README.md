@@ -1,6 +1,4 @@
-# Rug Language
-
-A markup language for thoughtlessly writing literate html, inspired by [pug-js](https://pugjs.org/api/getting-started.html)
+A markup language for thoughtlessly writing <a href="https://en.wikipedia.org/wiki/Literate_programming"><i>literate html</i></a>, inspired by [pug-js](https://pugjs.org/api/getting-started.html)
 
 ## Examples
 
@@ -100,6 +98,31 @@ const rugContent = `
 // Option 3: Import from a .rug file
 import content from '../content/hello.rug?raw'
 </script>
+```
+
+### Attributes
+Use colons to add attributes:
+```
+.button:type="submit":disabled="true"
+  Submit
+
+.input:required="true":type="email"
+.label:for="email" Email Address
+```
+
+### Form Example
+```
+.form:method="post"
+  .form-group
+    .label:for="name" Name:
+    .input#name:type="text":required="true"
+  
+  .form-group
+    .label:for="email" Email:
+    .input#email:type="email":required="true"
+  
+  .button.primary:type="submit"
+    Submit Form
 ```
 
 MIT

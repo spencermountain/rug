@@ -25,7 +25,7 @@
 
     .editor {
       background: #f5f5f5;
-      padding: 20px;
+      padding: 0px;
       border-radius: 8px;
     }
 
@@ -40,7 +40,7 @@
       background: #fff;
       border: 1px solid #ddd;
       border-radius: 8px;
-      padding: 20px;
+      padding: 0px;
       overflow: auto;
     }
 
@@ -61,7 +61,7 @@
 
     pre {
       margin: 0;
-      padding: 10px;
+      padding: 0px;
       background: #f8f8f8;
       border-radius: 4px;
       font-size: 14px;
@@ -70,13 +70,13 @@
     .section-title {
       font-weight: 500;
       color: #666;
-      margin-bottom: 10px;
+      margin-bottom: 0px;
     }
   </style>
 </head>
 
 <body>
-  <h1>Rug Language Demo</h1>
+  <h3 style="color:steelblue">run-lang Demo</h3>
   <div class="container">
     <div class="editor">
       <textarea id="input" spellcheck="false">Hello world!
@@ -91,28 +91,26 @@ Another paragraph
 with line breaks.</textarea>
     </div>
     <div class="preview">
+      <div class="section-title">Rendered Result:</div>
       <div class="preview-section">
-        <div class="section-title">Rendered Result:</div>
         <div id="rendered"></div>
       </div>
+      <div class="section-title">Output HTML:</div>
       <div class="preview-section">
-        <div class="section-title">Output HTML:</div>
         <pre id="output" style="white-space: pre-wrap; color: #666;"></pre>
       </div>
     </div>
   </div>
   <script src="../builds/index.js"></script>
   <script>
-    console.log('demo/index.html');
     const input = document.getElementById('input');
     const output = document.getElementById('output');
     const rendered = document.getElementById('rendered');
 
     function updatePreview() {
-      console.log('updatePreview');
       try {
-        console.log('input.value', input.value);
         const result = parseRug(input.value);
+        console.log('input.value', input.value);
         console.log('result', result);
         output.textContent = result;
         rendered.innerHTML = result;
