@@ -1,46 +1,55 @@
-A markup language for thoughtlessly writing <a href="https://en.wikipedia.org/wiki/Literate_programming"><i>literate html</i></a>, inspired by [pug-js](https://pugjs.org/api/getting-started.html)
+A markup language for thoughtlessly writing <a href="https://en.wikipedia.org/wiki/Literate_programming"><i>literate</i></a> html, inspired by [pug-js](https://pugjs.org/api/getting-started.html)
 
 ## Examples
 
-plaintext 'WYSIWYG' whitespace is preserved.
+'WYSIWYG' whitespace is preserved in the HTML. Newlines and indentations are well-respected.
 
 ```
 hello world
-and now below
+this is below
+
+and so is this.
+
+   and this is really indented.
+
 
 .container.mx-4
-  This is inside
+  But this is within a container
   .card.p-2
     Nested content
     with multiple lines
 ```
 
 fancy html with attributes
-```pug
-.label[for=email] Email:
-.input#email[type=email][required]
-.button.primary[type=submit]
+```
+.label:for="email" Email:
+.input#email:type="email":required
+.button.primary:type=submit
    Submit Form
 ```
 
-inline html is also supported
+inline html is also cool
 ```pug
 oh hello there, <a href="#">world</a>
 ```
 
-but primarily, the main point is that you can just write plain text, and it will create an intuitive mirror html. 
+The main point is that you can just write plain text, and not think about it, and it will create intuitive mirror html, without bunging anything up.
 
-Anytime you want to drop into any complex HTML, you can.
+Anytime you want to drop-into any some complex HTML, you're free to.
+
+I built this because I was frustrated with **markdown** eating up whitespace. I was also interrupted by **pug** assuming any first word of a line was a tag name, and eating that up.
+
+Primarily, I just wanted text to appear in the browser like in the text editor, unless specified otherwise.
 
 It was built to be used in static-site generators like NUXT, but it's a standalone library that you can use in any project.
 
 ## Installation
 ```bash
-npm install rug-language
+npm install rug-lang
 ```
 
 ```js
-import parseRug from 'rug-language'
+import parseRug from 'rug-lang'
 const html = parseRug(input)
 console.log(html)
 ```
